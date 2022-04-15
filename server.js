@@ -30,9 +30,11 @@ app.use(bodyParser.urlencoded({
 }));
 
 // implement database
-db.sequelize.sync({
-  force: true,
-});
+(async () => {
+  await db.sequelize.sync({
+    force: true
+  });
+})();
 
 // implement routes
 app.use('/api/', auth, api);
