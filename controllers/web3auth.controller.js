@@ -23,39 +23,32 @@ exports.signature = (req, res) => {
 /**
  * controller for authenticate
  */
-exports.authenticate = (req, res) => {
+exports.authenticate = async (req, res) => {
   // TODO
   // verifySignature()
+  try {
+    const [user, created] = await Profiles
+      .findOrCreate({
+        where: {
+          address: req.body.address,
+        },
+        defaults: {
+          token: jwt.sign({
+            user_address: req.body.address,
+          }, 'secret'),
+        }
+      });
 
-  Profiles
-    .findOne({
-      where: {
-        address: req.body.address,
-      },
-    })
-    .then((obj) => {
-      if (obj) {
-        return obj;
-      }
-      return Profiles.create({
-        address: req.body.address,
-        token: jwt.sign({
-          user_address: req.body.address,
-        }, 'secret'),
-      });
-    })
-    .catch(() => {
-      res.status(400).json({
-        errors: 'user not found.',
-      });
-    })
-    .then((obj) => {
       const sess = req.session;
-      sess.token = obj.token;
+      sess.token = user.token;
       res.status(200).json({
-        token: obj.token,
+        token: user.token,
       });
+  } catch (err) {
+    return res.status(500).json({
+      errors: 'error'
     });
+  }
 };
 
 exports.logout = (req, res) => {

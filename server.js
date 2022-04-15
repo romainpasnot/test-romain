@@ -7,6 +7,7 @@ const auth = require('./middleware/auth.middleware');
 const api = require('./routes/api.route');
 const metamask = require('./routes/metamask.route');
 const db = require('./models');
+// const jobOpensea = require('./jobs/opensea.job');
 
 // implement app express
 const app = express();
@@ -32,15 +33,6 @@ app.use(bodyParser.urlencoded({
 db.sequelize.sync({
   force: true,
 });
-
-// const sdk = require('api')('@opensea/v1.0#bg4ikl1mk428b');
-//
-// sdk['retrieving-a-single-contract']({
-//   asset_contract_address: '0x11450058d796b02eb53e65374be59cff65d3fe7f',
-//   'X-API-KEY': ''
-// })
-//   .then(res => console.log(res))
-//   .catch(err => console.error(err));
 
 // implement routes
 app.use('/api/', auth, api);
